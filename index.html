@@ -600,10 +600,12 @@
         campaign: get("campaign"), status: get("status") || "Ativa",
         spend: parseMoney(get("spend")) || 0, leads: parseMoney(get("leads")) || 0,
       };
-    }).filter(r => {
-      const s = r.status.toLowerCase();
-      return s.startsWith("ativ") || s.startsWith("activ") || s === "on"; // pt-BR ou inglês
-    });
+      
+    }).filter(r => r.campaign); // só descarta linha sem nome de campanha —
+    // NÃO filtra por status: campanhas pausadas precisam continuar
+    // aparecendo com o histórico completo (é isso que o status "PAUSED"
+    // na tabela é pra mostrar). Filtrar aqui por "ativa" apagava do painel
+    // todo o histórico de qualquer campanha assim que ela era pausada.
   }
 
   // Aceita "valor" ou "valor_honorario" pro campo de valor do contrato, e
